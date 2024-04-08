@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 
 from models.db_connection.database import Base
 
@@ -13,5 +13,16 @@ class Users(Base):
     name = Column(String)
     company_id = Column(Integer, default=None)
     dept_id = Column(Integer, default=None)
+    picture = Column(String, default=None)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
+
+
+class Friends(Base):
+    __tablename__ = "friends"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id1 = Column(Integer, nullable=False)
+    user_id2 = Column(Integer, nullable=False)
+    status = Column(String)
+    created_at = Column(DateTime)

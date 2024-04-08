@@ -1,4 +1,15 @@
 from pydantic import BaseModel
+from typing import Any
+
+
+class UserInfoBase(BaseModel):
+    username: str
+    comp_name: str
+    dept_name: str
+
+
+class UserNameBase(BaseModel):
+    name: str
 
 
 class UserBase(BaseModel):
@@ -12,3 +23,12 @@ class Users(UserBase):
 
     class Config:
         from_attributes = True
+
+
+class Token(BaseModel):
+    token: Any
+
+
+class FriendIDBase(BaseModel):
+    cid: int
+
