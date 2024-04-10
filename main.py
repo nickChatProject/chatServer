@@ -1,5 +1,6 @@
 import json
 import os
+import traceback
 
 from fastapi import FastAPI, Request
 from fastapi.security import OAuth2PasswordBearer
@@ -37,7 +38,7 @@ class MyMiddleware(BaseHTTPMiddleware):
             else:
                 raise Exception("User does not login or token is expired.")
         except Exception as e:
-            err_res = {'error': str(e)}
+            err_res = {'traceback': traceback.format_tb(e.__traceback__)[0], 'error_msg': str(e)}
             return JSONResponse(err_res, status_code=418)
 
 

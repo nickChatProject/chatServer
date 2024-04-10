@@ -1,4 +1,5 @@
 import json
+import traceback
 
 from fastapi import APIRouter, Request, Depends
 from sqlalchemy import or_, and_
@@ -40,7 +41,7 @@ def get_friends(request: Request, db: Session = Depends(get_db)):
         return JSONResponse(friends_dict)
 
     except Exception as e:
-        err_res = {'error': str(e)}
+        err_res = {'traceback': traceback.format_tb(e.__traceback__)[0], 'error_msg': str(e)}
         return JSONResponse(err_res, status_code=418)
 
 
@@ -62,7 +63,7 @@ def get_friends_by_name(user_name: UserNameBase, request: Request, db: Session =
         return JSONResponse(friends_dict)
 
     except Exception as e:
-        err_res = {'error': str(e)}
+        err_res = {'traceback': traceback.format_tb(e.__traceback__)[0], 'error_msg': str(e)}
         return JSONResponse(err_res, status_code=418)
 
 
@@ -77,5 +78,5 @@ def change_friend_status(friend: FriendIDBase, request: Request, db: Session = D
         return JSONResponse({"msg", "Friend request is accepted"})
 
     except Exception as e:
-        err_res = {'error': str(e)}
+        err_res = {'traceback': traceback.format_tb(e.__traceback__)[0], 'error_msg': str(e)}
         return JSONResponse(err_res, status_code=418)

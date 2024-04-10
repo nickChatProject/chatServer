@@ -40,13 +40,10 @@ async def websocket_endpoint(user_id, websocket: WebSocket, db: Session = Depend
                     and_(Friends.user_id1 == msg['receiver_id'], Friends.user_id2 == msg['sender_id']).all())
                 if not db_friend:
                     add_friend = Friends(user_id1=msg['sender_id'], user_id2=msg['receiver_id'], status="pending",
-                            created_at=datetime.now(timezone.utc))
+                                         created_at=datetime.now(timezone.utc))
                     db.add(add_friend)
                     db.commit()
                     db.refresh(add_friend)
-                else:
-                    if db_friend[0][1] == "friend":
-                        raise Exception('You are already friends!')
             if msg['receiver_id'] not in connected_users:
                 continue
             for user, user_ws in connected_users.items():

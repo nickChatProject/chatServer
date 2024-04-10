@@ -1,4 +1,5 @@
 import json
+import traceback
 
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
@@ -32,7 +33,7 @@ def user_login(userinfo: UserBase, db: Session = Depends(get_db)):
         res = {'success': True, 'token': token, 'user_id': user.cid, 'picture': picture}
         return JSONResponse(res)
     except Exception as e:
-        err_res = {'error': str(e)}
+        err_res = {'traceback': traceback.format_tb(e.__traceback__)[0], 'error_msg': str(e)}
         return JSONResponse(err_res, status_code=418)
 
 
@@ -46,5 +47,5 @@ def user_status_check(token: Token):
         res = {'user_id': cid}
         return JSONResponse(res)
     except Exception as e:
-        err_res = {'error': str(e)}
+        err_res = {'traceback': traceback.format_tb(e.__traceback__)[0], 'error_msg': str(e)}
         return JSONResponse(err_res, status_code=418)

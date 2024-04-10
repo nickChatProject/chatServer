@@ -2,10 +2,13 @@ from pydantic import BaseModel
 from typing import Any
 
 
-class UserInfoBase(BaseModel):
-    username: str
+class UserOrgBase(BaseModel):
     comp_name: str
     dept_name: str
+
+
+class UserEmailBase(BaseModel):
+    email: str
 
 
 class UserNameBase(BaseModel):

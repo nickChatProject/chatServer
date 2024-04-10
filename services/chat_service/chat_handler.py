@@ -1,4 +1,4 @@
-
+import traceback
 import uuid
 
 
@@ -64,7 +64,7 @@ def chat_history(request: Request, receiver: ChatReceiverBase, db: Session = Dep
         return JSONResponse(messages_list)
 
     except Exception as e:
-        err_res = {'error': str(e)}
+        err_res = {'traceback': traceback.format_tb(e.__traceback__)[0], 'error_msg': str(e)}
         return JSONResponse(err_res, status_code=418)
 
 

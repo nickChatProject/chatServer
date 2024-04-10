@@ -1,4 +1,5 @@
 import os
+import traceback
 
 from fastapi import APIRouter, Request, UploadFile
 from starlette.responses import FileResponse, JSONResponse
@@ -16,7 +17,7 @@ def file(request: Request):
         else:
             raise Exception("File not found")
     except Exception as e:
-        err_res = {'error': str(e)}
+        err_res = {'traceback': traceback.format_tb(e.__traceback__)[0], 'error_msg': str(e)}
         return JSONResponse(err_res, status_code=418)
 
 
@@ -30,7 +31,7 @@ async def create_upload_file(files: UploadFile):
         return {"message": "File saved successfully"}
 
     except Exception as e:
-        err_res = {'error': str(e)}
+        err_res = {'traceback': traceback.format_tb(e.__traceback__)[0], 'error_msg': str(e)}
         return JSONResponse(err_res, status_code=418)
 
 

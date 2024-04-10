@@ -1,4 +1,5 @@
 import os
+import traceback
 
 from fastapi import APIRouter
 from fastapi import Request
@@ -24,5 +25,5 @@ def image(request: Request):
     #     else:
     #         raise Exception("Image not found")
     except Exception as e:
-        err_res = {'error': str(e)}
+        err_res = {'traceback': traceback.format_tb(e.__traceback__)[0], 'error_msg': str(e)}
         return JSONResponse(err_res, status_code=418)
