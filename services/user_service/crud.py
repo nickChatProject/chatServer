@@ -3,6 +3,7 @@ import traceback
 
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
+from sqlalchemy import and_
 from starlette.responses import JSONResponse
 
 from models.db_connection.database import get_db
@@ -15,7 +16,7 @@ from models.users.users import Users, Friends
 router = APIRouter()
 
 
-@router.post("/search_users/org", response_model=list[schemas.Users])
+@router.post("/search_users/org/", response_model=list[schemas.Users])
 def get_users_by_org(org_info: UserOrgBase, request: Request, db: Session = Depends(get_db)):
     try:
         cid = int(request.headers.get('cid'))
@@ -35,8 +36,8 @@ def get_users_by_org(org_info: UserOrgBase, request: Request, db: Session = Depe
             }
             users_list.append(user_dict)
         if users_list:
-            friends = (db.query(Friends.user_id1).filter(Friends.user_id2 == cid).all()
-                       + db.query(Friends.user_id2).filter(Friends.user_id1 == cid).all())
+            friends = (db.query(Friends.user_id1).filter(Friends.user_id2 == cid, Friends.status == "friend").all()
+                       + db.query(Friends.user_id2).filter(Friends.user_id1 == cid, Friends.status == "friend").all())
             for friend in friends:
                 for user in users_list:
                     if friend[0] == user["cid"]:
@@ -86,20 +87,22 @@ def get_users_by_org(org_info: UserOrgBase, request: Request, db: Session = Depe
 def get_user_by_email(email: UserEmailBase, request: Request, db: Session = Depends(get_db)):
     try:
         cid = int(request.headers.get('cid'))
-        user = db.query(Users.cid, Users.name, Users.email, Users.picture).filter(Users.email == email.email)
+        user = db.query(Users.cid, Users.name, Users.email, Users.picture).filter(Users.email == email.email).first()
         if user:
             user_info = {
-                "cid": user[0][0],
-                "username": user[0][1],
-                "email": user[0][2],
-                "picture": user[0][3],
+                "cid": user.cid,
+                "username": user.name,
+                "email": user.email,
+                "picture": user.picture,
                 "is_friend": False
             }
-            friends = (db.query(Friends.user_id1).filter(Friends.user_id2 == cid).all()
-                       + db.query(Friends.user_id2).filter(Friends.user_id1 == cid).all())
-            for friend in friends:
-                if friend[0] == user_info['cid']:
-                    user_info["is_friend"] = True
+            is_friend = db.query(Friends.id).filter(and_(Friends.user_id1 == cid, Friends.user_id2 == user.cid,
+                                                         Friends.status == "friend") |
+                                                    and_(Friends.user_id1 == user.cid), Friends.user_id2 == cid,
+                                                    Friends.status == "friend").first()
+            if is_friend:
+                user_info["is_friend"] = True
+
             return JSONResponse([user_info])
         else:
             return JSONResponse([])

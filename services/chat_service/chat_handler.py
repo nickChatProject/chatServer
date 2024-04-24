@@ -1,24 +1,17 @@
 import traceback
-import uuid
-
+import pytz
 
 from fastapi import APIRouter, Request, Depends
 from sqlalchemy import and_
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
-
+from datetime import timezone
 
 from models.chats.mssages import Msg
 from models.chats.schemas import ChatReceiverBase
 from models.db_connection.database import get_db
 
-
 router = APIRouter()
-
-
-
-
-
 
 
 # @router.websocket("/ws/{user_id}/")
@@ -43,10 +36,10 @@ router = APIRouter()
 def chat_history(request: Request, receiver: ChatReceiverBase, db: Session = Depends(get_db)):
     try:
         cid = int(request.headers.get('cid'))
-        messages = (db.query(Msg.id, Msg.type, Msg.sender_id, Msg.receiver_id, Msg.content)
-                            .filter(and_(Msg.sender_id == cid, Msg.receiver_id == receiver.receiver_id) |
-                                    and_(Msg.sender_id == receiver.receiver_id, Msg.receiver_id == cid))
-                            .order_by(Msg.created_at).all())
+        messages = (db.query(Msg.id, Msg.type, Msg.sender_id, Msg.receiver_id, Msg.content, Msg.created_at)
+                    .filter(and_(Msg.sender_id == cid, Msg.receiver_id == receiver.receiver_id) |
+                            and_(Msg.sender_id == receiver.receiver_id, Msg.receiver_id == cid))
+                    .order_by(Msg.created_at).all())
         if len(messages) == 0:
             return JSONResponse([])
 
@@ -57,7 +50,8 @@ def chat_history(request: Request, receiver: ChatReceiverBase, db: Session = Dep
                 'type': msg[1],
                 'sender_id': msg[2],
                 'receiver_id': msg[3],
-                'content': msg[4]
+                'content': msg[4],
+                'created_at': msg[5].strftime("%m/%d/%Y, %H:%M")
             }
             messages_list.append(msg_dict)
 
@@ -66,5 +60,3 @@ def chat_history(request: Request, receiver: ChatReceiverBase, db: Session = Dep
     except Exception as e:
         err_res = {'traceback': traceback.format_tb(e.__traceback__)[0], 'error_msg': str(e)}
         return JSONResponse(err_res, status_code=418)
-
-

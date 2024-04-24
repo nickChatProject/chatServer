@@ -1,11 +1,19 @@
 import os
+import shutil
 import traceback
+import uuid
 
 from fastapi import APIRouter
-from fastapi import Request
+from fastapi import Request, UploadFile, Depends
+from sqlalchemy.orm import Session
 from starlette.responses import StreamingResponse, JSONResponse
 
+from models.db_connection.database import get_db
+from models.users.users import Users
+
 router = APIRouter()
+
+
 @router.get("/image/")
 def image(request: Request):
     try:
@@ -24,6 +32,32 @@ def image(request: Request):
     #         return FileResponse(path=file_path, filename=image_name)
     #     else:
     #         raise Exception("Image not found")
+    except Exception as e:
+        err_res = {'traceback': traceback.format_tb(e.__traceback__)[0], 'error_msg': str(e)}
+        return JSONResponse(err_res, status_code=418)
+
+
+@router.post("/avatar/")
+def avatar(request: Request, files: UploadFile, db: Session = Depends(get_db)):
+    try:
+        cid = str(request.headers.get('cid'))
+        upload_picture_path = f"images/{files.filename}"
+        old_picture = db.query(Users).filter(Users.cid == int(cid)).first()
+        if not os.path.isfile(upload_picture_path) and old_picture.picture:
+            old_picture_path = f"images/{old_picture.picture}"
+            os.remove(old_picture_path)
+            with open(upload_picture_path, "wb") as f:
+                f.write(files.file.read())
+            old_picture.picture = files.filename
+            db.commit()
+        elif os.path.isfile(upload_picture_path):
+            raise Exception("Image name is already exist, please upload again")
+        else:
+            with open(upload_picture_path, "wb") as f:
+                f.write(files.file.read())
+            old_picture.picture = files.filename
+            db.commit()
+
     except Exception as e:
         err_res = {'traceback': traceback.format_tb(e.__traceback__)[0], 'error_msg': str(e)}
         return JSONResponse(err_res, status_code=418)

@@ -35,15 +35,17 @@ async def websocket_endpoint(user_id, websocket: WebSocket, db: Session = Depend
                 db.refresh(db_msg)
 
             elif msg["type"] == "friend_request":
-                db_friend = db.query(Friends.id, Friends.status).filter(
-                    and_(Friends.user_id1 == msg['sender_id'], Friends.user_id2 == msg['receiver_id']) |
-                    and_(Friends.user_id1 == msg['receiver_id'], Friends.user_id2 == msg['sender_id']).all())
+                db_friend = (db.query(Friends.id, Friends.status)
+                             .filter(Friends.user_id1 == msg['sender_id'],
+                                     Friends.user_id2 == msg['receiver_id']).all())
+                print(db_friend)
                 if not db_friend:
                     add_friend = Friends(user_id1=msg['sender_id'], user_id2=msg['receiver_id'], status="pending",
                                          created_at=datetime.now(timezone.utc))
                     db.add(add_friend)
                     db.commit()
-                    db.refresh(add_friend)
+                    print('save db success====================')
+
             if msg['receiver_id'] not in connected_users:
                 continue
             for user, user_ws in connected_users.items():
