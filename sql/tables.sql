@@ -1,4 +1,4 @@
-create table friends
+create table IF NOT EXISTS friends
 (
     id         int auto_increment
         primary key,
@@ -8,7 +8,7 @@ create table friends
     created_at datetime    null
 );
 
-create table messages
+create table IF NOT EXISTS messages
 (
     id          int auto_increment
         primary key,
@@ -19,7 +19,7 @@ create table messages
     created_at  datetime     null
 );
 
-create table organization_company
+create table IF NOT EXISTS organization_company
 (
     id         int auto_increment
         primary key,
@@ -31,7 +31,7 @@ create table organization_company
         unique (name)
 );
 
-create table organization_department
+create table IF NOT EXISTS organization_department
 (
     id         int auto_increment
         primary key,
@@ -41,7 +41,7 @@ create table organization_department
         foreign key (company_id) references organization_company (id)
 );
 
-create table user_client
+create table IF NOT EXISTS user_client
 (
     cid        int auto_increment
         primary key,
