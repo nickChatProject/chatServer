@@ -41,3 +41,19 @@ cd sql
 mysql -u username -p databasename < tables.sql
 mysql -u username -p databasename < test_data.sql
 ```
+## Test websocket
+Connection url
+```python=
+ws://localhost:8000/ws/user_id/
+```
+Test data
+```json=
+{
+    "type":"message",
+     "sender_id":user_id(int), 
+     "receiver_id":user_id(int),
+     "content":"hello"
+}
+```
+You can use the website below for testing websocket
+[WebSocket King client](https://websocketking.com/)
