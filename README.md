@@ -32,3 +32,12 @@ Run the server
 ```shell=
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
+
+## Create table and import test data in MySQL
+
+Enter into sql folder and import tables.sql and test_data.sql to your database.
+```shell=
+cd sql
+mysql -u username -p databasename < tables.sql
+mysql -u username -p databasename < test_data.sql
+```
