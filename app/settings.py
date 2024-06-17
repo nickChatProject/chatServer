@@ -4,12 +4,12 @@ import os
 
 class Settings(BaseSettings):
     class Database:
-        database_url: str = 'mysql+pymysql://root:a0995102@localhost:3306/py_practice'
+        database_url: str = 'mysql+pymysql://'
 
     class RedisParam:
-        url: str = 'redis-11981.c294.ap-northeast-1-2.ec2.cloud.redislabs.com'
+        url: str = ''
         port: int = 11981
-        password: str = 'wdO1yc36yugvXDbc4YYy91wQuICfmec7'
+        password: str = ''
         expire_time: int = 60 * 60 * 24
 
     class ConfigParam:
@@ -18,10 +18,10 @@ class Settings(BaseSettings):
 
 class SettingsProd(BaseSettings):
     class Database:
-        database_url: str = 'mysql+pymysql://admin:a0995102@mychatdb.c7442msioygz.ap-northeast-3.rds.amazonaws.com:3306/mychat'
+        database_url: str = 'mysql+pymysql://'
 
     class RedisParam:
-        url: str = 'nick-chat-cache.l1h19d.ng.0001.apn3.cache.amazonaws.com'
+        url: str = ''
         port: int = 6379
         password: str = None
         expire_time: int = 60 * 60 * 24
