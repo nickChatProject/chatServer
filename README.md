@@ -1,4 +1,4 @@
-# Real-Time Chat App with FastAPI and WebSocket
+# Real-Time Chat App Server with FastAPI and WebSocket
 
 
 ## Features
