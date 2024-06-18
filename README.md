@@ -4,9 +4,9 @@
 ## Features
 
 
-- Websocket for real-time chat.
-- Chat history.
-- Add friends.
+- Websocket for real-time chat
+- Chat history
+- Add friends
 - Files & images upload
 - Token-based authentication with redis
 - Swagger UI
