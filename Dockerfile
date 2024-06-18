@@ -8,8 +8,6 @@ WORKDIR /chatServer
 RUN export ENV=prod
 RUN mkdir files
 RUN mkdir images
-VOLUME ["/chatServer/files"]
-VOLUME ["/chatServer/images"]
 
 #
 COPY requirements.txt ./requirements.txt
